@@ -50,13 +50,15 @@ public class Main {
                     instance = ReadData.read(new File("src/main/java/org/example/Data/kummer/" + instanceName));
 
                 } else {
-                    Config config = Config.read(configFile);
+//                    Config config = Config.read(configFile);
 
                     // Extract parameters from JSON
-                    int problemSize = config.getProblemSize();
-                    instanceNumber = config.getInstanceIndex();
+//                    int problemSize = config.getProblemSize();
+//                    instanceNumber = config.getInstanceIndex();
+                    int problemSize = Integer.parseInt(args[0]);
+                    instanceNumber = Integer.parseInt(args[1]);
 
-                    int runCount = Integer.parseInt(args[1]);
+                    int runCount = Integer.parseInt(args[2]);
                     randomSeed = System.currentTimeMillis() + runCount;
 
                     String[] Instances = {"10", "25", "50", "75", "100", "200", "300"};
@@ -67,7 +69,7 @@ public class Main {
                     new File(resultDir).mkdirs();
 
                     // Read dataset
-                    PrintStream fileout = new PrintStream(resultDir + "/Result_" + instanceName + "_" + instanceNumber + "_" + i + "_" + randomSeed + ".txt");
+                    PrintStream fileout = new PrintStream(resultDir + "/Result_" + instanceName + "_" + instanceNumber + "_" + runCount + "_" + randomSeed + ".txt");
                     System.setOut(fileout);
                     System.out.printf("Config Parameters: ProblemSize=%d, instanceNumber=%d, seed=%d\n", problemSize, instanceNumber, randomSeed);
 
