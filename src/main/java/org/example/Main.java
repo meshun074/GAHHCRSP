@@ -63,12 +63,12 @@ public class Main {
                     instanceName = Instances[problemSize];
 
                     //create result directory
-//                    String resultDir = "src/main/java/org/example/BCRCM_" + problemSize + "_" + instanceNumber + "_results";
-//                    new File(resultDir).mkdirs();
-//
-//                    // Read dataset
-//                    PrintStream fileout = new PrintStream(resultDir + "/Result_" + instanceName + "_" + instanceNumber + "_" + i + "_" + randomSeed + ".txt");
-//                    System.setOut(fileout);
+                    String resultDir = "src/main/java/org/example/BCRCT3_" + problemSize + "_" + instanceNumber + "_results";
+                    new File(resultDir).mkdirs();
+
+                    // Read dataset
+                    PrintStream fileout = new PrintStream(resultDir + "/Result_" + instanceName + "_" + instanceNumber + "_" + i + "_" + randomSeed + ".txt");
+                    System.setOut(fileout);
                     System.out.printf("Config Parameters: ProblemSize=%d, instanceNumber=%d, seed=%d\n", problemSize, instanceNumber, randomSeed);
 
                     instance = ReadData.read(new File("src/main/java/org/example/Data/instance/" + instanceName + "_" + instanceNumber + ".json"));
