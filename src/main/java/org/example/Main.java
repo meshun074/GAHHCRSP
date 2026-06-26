@@ -22,7 +22,10 @@ public class Main {
             System.err.println("Usage: java GeneticAlgorithmRunner <config-file>");
             return;
         }
-        for (int i = 0; i < 1; i++) {
+        int runs =1;
+        double avg = 0.0;
+        double best = Double.MAX_VALUE;
+        for (int i = 1; i <= runs; i++) {
             long randomSeed;
             long instanceNumber;
             String instanceName;
@@ -60,12 +63,12 @@ public class Main {
                     instanceName = Instances[problemSize];
 
                     //create result directory
-                    String resultDir = "src/main/java/org/example/BSTest_" + problemSize + "_" + instanceNumber + "_results";
-                    new File(resultDir).mkdirs();
-
-                    // Read dataset
-                    PrintStream fileout = new PrintStream(resultDir + "/Result_" + instanceName + "_" + instanceNumber + "_" + runCount + "_" + randomSeed + ".txt");
-                    System.setOut(fileout);
+//                    String resultDir = "src/main/java/org/example/BCRCM_" + problemSize + "_" + instanceNumber + "_results";
+//                    new File(resultDir).mkdirs();
+//
+//                    // Read dataset
+//                    PrintStream fileout = new PrintStream(resultDir + "/Result_" + instanceName + "_" + instanceNumber + "_" + i + "_" + randomSeed + ".txt");
+//                    System.setOut(fileout);
                     System.out.printf("Config Parameters: ProblemSize=%d, instanceNumber=%d, seed=%d\n", problemSize, instanceNumber, randomSeed);
 
                     instance = ReadData.read(new File("src/main/java/org/example/Data/instance/" + instanceName + "_" + instanceNumber + ".json"));
@@ -73,10 +76,16 @@ public class Main {
 
                 Configuration config = parseArguments.getConfiguration(args);
 
-                GeneticAlgorithm ga = new GeneticAlgorithm(config, 1000, instance);
+                GeneticAlgorithm ga = new GeneticAlgorithm(config, i,600, instance);
                 Chromosome bestChromosome = ga.start();
 
+                avg += bestChromosome.getFitness();
+                if(bestChromosome.getFitness() <best) {
+                    best = bestChromosome.getFitness();
+                }
+
                 assert bestChromosome != null;
+                EvaluationFunction.Evaluate(bestChromosome);
                 System.out.println("----------------- Solution ----------------------");
                 System.out.println("Instance_" + instanceName + "_" + instanceNumber + " Best Fitness: " + Math.round(bestChromosome.getFitness() * 1000.0) / 1000.0);
                 System.out.println("Total Distance: " + bestChromosome.getTotalTravelCost() + " Total Tardiness: " + bestChromosome.getTotalTardiness() + " Highest Tardiness: " + bestChromosome.getHighestTardiness());
@@ -87,6 +96,9 @@ public class Main {
 
 
         }
+        System.out.println("Best: " + best);
+        System.out.println("Average Fitness: " + avg/runs);
+        System.out.println("--------------- End ----------------");
 
     }
 }

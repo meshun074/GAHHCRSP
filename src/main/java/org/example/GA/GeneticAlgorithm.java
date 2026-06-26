@@ -84,6 +84,7 @@ public class GeneticAlgorithm {
         caregiversNum = data.getCaregivers().length;
         EvaluationFunction.initialize(data);
         LocalSearchNew.initialize(data);
+        LocalSearchNewNew.initialize(data);
         limit = Math.min(numOfEliteSearch, eliteRandomList.size());
         nextPopulation = new ArrayList<>(popSize);
         tempPopulation = new ArrayList<>(popSize);
@@ -93,31 +94,34 @@ public class GeneticAlgorithm {
     }
 
     public Chromosome start() {
-        System.out.printf("Population Size: %d, Generation: %d, LSRate: %d, SelectionType: %s TSRate: %d, Crossover type: %s\n CrossRate: %f, EliteRate: %f, MutType: %s Mutation Rate: %f, Number of Elite Search: %d\n", popSize, gen, LSRate, selectTechnique, TSRate, crossType, crossRate, elitismRate, mutType, mutRate, numOfEliteSearch);
+        System.out.printf("Population Size: %d, Generation: %d, SelectionType: %s TSRate: %d, Crossover type: %s\n CrossRate: %f, EliteRate: %f, MutType: %s Mutation Rate: %f\n", popSize, gen, selectTechnique, TSRate, crossType, crossRate, elitismRate, mutType, mutRate);
         bestChromosome = null;
         startTimer();
         System.out.println("Initializing Population ...");
         newPopulation = Population.initialize(popSize, patientLength);
         System.out.printf("Population initialized: CPU Timer(s): %s Timer(s): %s\n", getTotalCPUTimeSeconds(), getTotalTimeSeconds());
         sortPopulation(newPopulation);
-        if (patientLength >= 50)
-            LocalSearch(0);
+//        if (patientLength >= 50)
+//            LocalSearch(1);
         performanceUpdate(0);
         for (int g = 1; g <= gen; g++) {
             elitism();
             crossover();
-            if (LSStart&&g % LSRate == 0)
-                LocalSearch(g);
-            mutation();
+//            if (LSStart&&g % LSRate == 0)
+//                LocalSearch(g);
+            if(mutSize>0)
+                mutation();
             update();
             performanceUpdate(g);
-            if (!LSStart && g % LSRate == 0)
-                LocalSearch(g);
+//            if (!LSStart && g % LSRate == 0)
+//                LocalSearch(g);
             if(patientLength<=100){
                 if(terminator == patientLength/2) break;
             }else {
                 if (terminator == 50) break;
             }
+//            if( getTotalTimeSeconds()>=7200)
+//                break;
         }
         return newPopulation.get(0);
     }
@@ -147,9 +151,11 @@ public class GeneticAlgorithm {
     private CrossoverStrategy getCrossoverStrategy() {
         if (crossType.equals("BS")) {
             BestCostRouteCrossoverSwapNew.initialize(data);
+            BestCostRouteCrossoverSwapNewNew.initialize(data);
             return this::bestCostRouteCrossoverSwap;
         }
         BestCostRouteCrossoverNew.initialize(data);
+        BestCostRouteCrossoverNewNew.initialize(data);
         return this::bestCostRouteCrossover;
     }
 
@@ -171,12 +177,31 @@ public class GeneticAlgorithm {
             }while (genes1[r1].isEmpty()||genes2[r2].isEmpty());
             int finalR2 = r2;
             BestCostRouteCrossoverNew bs = new BestCostRouteCrossoverNew(this, finalR2,p1,p2,index,rand);
-            tempPopulation.add(bs.Crossover());
+            Chromosome ch = bs.Crossover();
+            tempPopulation.add(ch);
+//            BestCostRouteCrossoverNew bs1 = new BestCostRouteCrossoverNew(this, finalR2,p1,p2,index,rand);
+//            Chromosome ch1 = bs1.Crossover();
+//            if(ch.getFitness()!=ch1.getFitness()) {
+//                System.out.println(ch+" fitness: "+ch.getFitness()+" travelCost: "+ ch.getTotalTravelCost()+" tardiness: "+ch.getTotalTardiness()+ " highestTardiness: "+ch.getHighestTardiness());
+//                System.out.println(ch1+" fitness: "+ch1.getFitness()+" travelCost: "+ ch1.getTotalTravelCost()+" tardiness: "+ch1.getTotalTardiness()+ " highestTardiness: "+ch1.getHighestTardiness());
+//                System.out.println("false");
+//                System.exit(1);
+//            }
+
             index++;
             int finalR1 = r1;
             if (index < crossSize){
                bs = new BestCostRouteCrossoverNew(this, finalR1,p2,p1,index,rand);
-                tempPopulation.add(bs.Crossover());
+               ch = bs.Crossover();
+                tempPopulation.add(ch);
+//                bs1 = new BestCostRouteCrossoverNew(this, finalR1,p2,p1,index,rand);
+//                ch1 = bs1.Crossover();
+//                if(ch.getFitness()!=ch1.getFitness()) {
+//                    System.out.println(ch+" fitness: "+ch.getFitness()+" travelCost: "+ ch.getTotalTravelCost()+" tardiness: "+ch.getTotalTardiness()+ " highestTardiness: "+ch.getHighestTardiness());
+//                    System.out.println(ch1+" fitness: "+ch1.getFitness()+" travelCost: "+ ch1.getTotalTravelCost()+" tardiness: "+ch1.getTotalTardiness()+ " highestTardiness: "+ch1.getHighestTardiness());
+//                    System.out.println("false");
+//                    System.exit(1);
+//                }
                 index++;
             }
         }
@@ -266,12 +291,32 @@ public class GeneticAlgorithm {
             }while (genes1[r1].isEmpty()||genes2[r2].isEmpty());
             int finalR2 = r2;
             BestCostRouteCrossoverSwapNew bs = new BestCostRouteCrossoverSwapNew(this, finalR2,p1,p2,rand);
-            tempPopulation.add(bs.Crossover());
+            Chromosome ch = bs.Crossover();
+            tempPopulation.add(ch);
+//            BestCostRouteCrossoverSwapNew bs1 = new BestCostRouteCrossoverSwapNew(this, finalR2,p1,p2,rand);
+//            Chromosome ch1 = bs1.Crossover();
+//
+//            if(ch.getFitness()!=ch1.getFitness()) {
+//                System.out.println(ch+" fitness: "+ch.getFitness()+" travelCost: "+ ch.getTotalTravelCost()+" tardiness: "+ch.getTotalTardiness()+ " highestTardiness: "+ch.getHighestTardiness());
+//                System.out.println(ch1+" fitness: "+ch1.getFitness()+" travelCost: "+ ch1.getTotalTravelCost()+" tardiness: "+ch1.getTotalTardiness()+ " highestTardiness: "+ch1.getHighestTardiness());
+//                System.out.println("false");
+//                System.exit(1);
+//            }
+
             index++;
             int finalR1 = r1;
             if (index < crossSize){
-                bs =new BestCostRouteCrossoverSwapNew(this, finalR1,p2,p1,rand);
-                tempPopulation.add(bs.Crossover());
+                bs = new BestCostRouteCrossoverSwapNew(this, finalR1,p2,p1,rand);
+                ch = bs.Crossover();
+                tempPopulation.add(ch);
+//                bs1  = new BestCostRouteCrossoverSwapNew(this, finalR1,p2,p1,rand);
+//                ch1 = bs1.Crossover();
+//                if(ch.getFitness()!=ch1.getFitness()) {
+//                    System.out.println(ch+" fitness: "+ch.getFitness()+" travelCost: "+ ch.getTotalTravelCost()+" tardiness: "+ch.getTotalTardiness()+ " highestTardiness: "+ch.getHighestTardiness());
+//                    System.out.println(ch1+" fitness: "+ch1.getFitness()+" travelCost: "+ ch1.getTotalTravelCost()+" tardiness: "+ch1.getTotalTardiness()+ " highestTardiness: "+ch1.getHighestTardiness());
+//                    System.out.println("false");
+//                    System.exit(1);
+//                }
                 index++;
             }
         }
@@ -516,8 +561,16 @@ public class GeneticAlgorithm {
             for (int i = LSStartSize; i < popSize; i++) {
                 Chromosome ch = newPopulation.get(i);
                 int index = i;
-                LocalSearchNew ls = new LocalSearchNew(this,ch, index, rand,generation);
+                LocalSearchNewNew ls = new LocalSearchNewNew(this,ch, index, rand,generation);
                 Chromosome temp = ls.search();
+//                LocalSearchNew lsNew = new LocalSearchNew(this,ch, index, rand,generation);
+//                Chromosome temp1 = lsNew.search();
+//                if(temp.getFitness()!=temp1.getFitness()){
+//                    System.out.println(temp+" fitness: "+temp.getFitness()+" travelCost: "+ temp.getTotalTravelCost()+" tardiness: "+temp.getTotalTardiness()+ " highestTardiness: "+temp.getHighestTardiness());
+//                    System.out.println(temp1+" fitness: "+temp1.getFitness()+" travelCost: "+ temp1.getTotalTravelCost()+" tardiness: "+temp1.getTotalTardiness()+ " highestTardiness: "+temp1.getHighestTardiness());
+//                    System.out.println("false");
+//                    System.exit(1);
+//                }
                 newPopulation.set(i, temp);
             }
         } else {
@@ -527,6 +580,14 @@ public class GeneticAlgorithm {
                 Chromosome ch = newPopulation.get(index);
                 LocalSearchNew ls = new LocalSearchNew(this,ch, index,rand, generation);
                 Chromosome ch1 = ls.search();
+//                LocalSearchNew lsNew = new LocalSearchNew(this,ch, index, rand,generation);
+//                Chromosome temp1 = lsNew.search();
+//                if(ch1.getFitness()!=temp1.getFitness()){
+//                    System.out.println(ch1+" fitness: "+ch1.getFitness()+" travelCost: "+ ch1.getTotalTravelCost()+" tardiness: "+ch1.getTotalTardiness()+ " highestTardiness: "+ch1.getHighestTardiness());
+//                    System.out.println(temp1+" fitness: "+temp1.getFitness()+" travelCost: "+ temp1.getTotalTravelCost()+" tardiness: "+temp1.getTotalTardiness()+ " highestTardiness: "+temp1.getHighestTardiness());
+//                    System.out.println("false");
+//                    System.exit(1);
+//                }
                 if(ch1.getFitness() < ch.getFitness()) {
                     newPopulation.remove(newPopulation.size() - 1);
                     newPopulation.add(elitismSize, ch);

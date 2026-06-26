@@ -6,15 +6,15 @@ public class parseArguments {
         int populationSize = 300;
         String selectionMethod = "T";
         double elitismRate = 0.1;
-        int TSRate = 4;
+        int TSRate = 3;
         String mutationMethod = "RS";
-        float mutRate = 0.1584f;
-        String crossoverMethod = "BS";
+        float mutRate = 0.0f;
+        String crossoverMethod = "BC";
         double crossRate =1.0;
         int numberOfElites= 5;
-        int LSRate =10;
+        int LSRate =0;
         boolean LSStart = false;
-        double LSStartRate = 0.9;
+        double LSStartRate = 0;
 //        String arg = "--popSize 300 --mutRate 0.05 --mutMethod S --crossRate 1.0 --crossMethod BS --selection RW --elitism 0.1 --numberOfElites 5 --LSRate 10 --TSRate 4 --instance src/main/java/org/example/Data/instance/200_1.json";
         for (int i = 0; i < args.length; i++) {
             switch (args[i]) {
